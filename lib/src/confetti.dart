@@ -1,6 +1,6 @@
 import 'dart:math';
 
-import 'package:confetti/src/particlesystem.dart';
+import 'package:confetti/src/particle.dart';
 import 'package:flutter/material.dart';
 
 import 'enums/blast_directionality.dart';
