@@ -1,6 +1,6 @@
 import 'dart:math';
 
-import 'package:confetti/src/particle.dart';
+import 'package:confetti/src/particlesystem.dart';
 import 'package:flutter/material.dart';
 
 import 'enums/blast_directionality.dart';
@@ -303,7 +303,7 @@ class _ConfettiWidgetState extends State<ConfettiWidget>
           _animController,
           strokeWidth: widget.strokeWidth,
           strokeColor: widget.strokeColor,
-          particles: _particleSystem.particles,
+          particleSystem: _particleSystem,
           paintEmitterTarget: widget.displayTarget,
         ),
         child: widget.child,
@@ -324,7 +324,7 @@ class _ConfettiWidgetState extends State<ConfettiWidget>
 class ParticlePainter extends CustomPainter {
   ParticlePainter(
     Listenable? repaint, {
-    required this.particles,
+    required this.particleSystem,
     bool paintEmitterTarget = true,
     Color emitterTargetColor = Colors.black,
     Color strokeColor = Colors.black,
@@ -343,7 +343,7 @@ class ParticlePainter extends CustomPainter {
           ..style = PaintingStyle.stroke,
         super(repaint: repaint);
 
-  final List<Particle> particles;
+  final ParticleSystem particleSystem;
 
   final Paint _emitterPaint;
   final bool _paintEmitterTarget;
@@ -372,15 +372,21 @@ class ParticlePainter extends CustomPainter {
   }
 
   void _paintParticles(Canvas canvas) {
-    for (final particle in particles) {
+    final paths = particleSystem.particlePaths;
+    for (var i = 0; i < particleSystem.arrCount; i++) {
+      final loc = particleSystem.arrLocation[i];
+      final offset = Offset(loc.x, loc.y);
       final rotationMatrix4 = Matrix4.identity()
-        ..translate(particle.location.dx, particle.location.dy)
+        ..translate(offset.dx, offset.dy);
+        /* TODO WIP 
         ..rotateX(particle.angleX)
         ..rotateY(particle.angleY)
         ..rotateZ(particle.angleZ);
-
-      final finalPath = particle.path.transform(rotationMatrix4.storage);
-      canvas.drawPath(finalPath, _particlePaint..color = particle.color);
+        */
+      final particlePath = paths[i];
+      final color = particleSystem.arrColor[i];
+      final finalPath = particlePath.pathShape.transform(rotationMatrix4.storage);
+      canvas.drawPath(finalPath, _particlePaint..color = color);
       if (strokeWidth > 0) {
         canvas.drawPath(finalPath, _particleStrokePaint);
       }
