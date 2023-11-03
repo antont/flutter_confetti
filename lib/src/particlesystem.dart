@@ -139,7 +139,7 @@ class ParticleSystem extends ChangeNotifier {
     if (_particleSystemStatus == ParticleSystemStatus.started) {
       // If there are no particles then immediately generate particles
       // This also ensures that particles are emitted on the first frame
-      if (arrCount == 0) {
+      if (arrCount <= 0) {
         _generateParticles(number: _numberOfParticles);
         return;
       }
@@ -189,8 +189,9 @@ class ParticleSystem extends ChangeNotifier {
   }
 
   void _updateParticles() {
-    final arrCount = arrLocation.length;
-
+    if (arrCount <= 0) {
+      return;
+    }
     //WIP TODO XXX reuse this
     List<vmath.Vector2> forces = List<vmath.Vector2>.filled(
       arrCount,
@@ -244,6 +245,7 @@ class ParticleSystem extends ChangeNotifier {
   }
 
   void _generateParticles({int number = 1}) {
+    print("[_generateParticles] arrCount: $arrCount, new number: $number");
     for (var i = 0; i < number; i++) {
         arrLocation[i] = vmath.Vector2.zero();
         arrAcceleration[i] = vmath.Vector2.zero();
@@ -253,7 +255,7 @@ class ParticleSystem extends ChangeNotifier {
         //arr_size[i] = _randomSize();
         arrGravity[i] = _gravity;
         
-        _particlePaths[i] = ParticlePath(_randomSize(), _createParticlePath);
+        _particlePaths.add(ParticlePath(_randomSize(), _createParticlePath));
     }
     arrCount = number;
   }
