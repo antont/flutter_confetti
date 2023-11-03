@@ -11,12 +11,14 @@ environment:
 dependencies:
   confetti:
     path: ../
-  cupertino_icons: ^0.1.2
+  cupertino_icons:
   flutter:
     sdk: flutter
 
 dev_dependencies:
   flutter_test:
+    sdk: flutter
+  integration_test:
     sdk: flutter
 
 flutter:
